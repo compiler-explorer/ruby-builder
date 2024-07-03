@@ -2,7 +2,6 @@
 
 set -ex
 
-ROOT=$PWD
 VERSION=$1
 
 URL=https://github.com/ruby/ruby.git
@@ -27,28 +26,19 @@ if [[ ! -z "${TAG}" ]]; then
     REF=refs/tags/${TAG}
 fi
 
+FULLNAME=ruby-${VERSION}
+OUTPUT=$2/${FULLNAME}.tar.xz
+
 # determine build revision
 REVISION=$(git ls-remote "${URL}" "${REF}" | cut -f 1)
 LAST_REVISION="${3}"
 
 echo "ce-build-revision:${REVISION}"
+echo "ce-build-output:${OUTPUT}"
 
 if [[ "${REVISION}" == "${LAST_REVISION}" ]]; then
   echo "ce-build-status:SKIPPED"
   exit
-fi
-
-FULLNAME=ruby-${VERSION}
-OUTPUT=${ROOT}/${FULLNAME}.tar.xz
-S3OUTPUT=
-if [[ $2 =~ ^s3:// ]]; then
-    S3OUTPUT=$2
-else
-    if [[ -d "${2}" ]]; then
-        OUTPUT=$2/${FULLNAME}.tar.xz
-    else
-        OUTPUT=${2-$OUTPUT}
-    fi
 fi
 
 BUILD_DIR=${ROOT}/build
@@ -84,6 +74,4 @@ make install
 export XZ_DEFAULTS="-T 0"
 tar Jcf ${OUTPUT} --transform "s,^./,./${FULLNAME}/," -C ${STAGING_DIR} .
 
-if [[ ! -z "${S3OUTPUT}" ]]; then
-    aws s3 cp --storage-class REDUCED_REDUNDANCY "${OUTPUT}" "${S3OUTPUT}"
-fi
+echo "ce-build-status:OK"
