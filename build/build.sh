@@ -36,8 +36,8 @@ fi
 
 rm -rf "${INSTALL_DIR}"
 mkdir -p "${INSTALL_DIR}"
-curl -L "${TARBALL_URL}" -o "${TARBALL_DOWNLOAD}"
-tar xzf "${TARBALL_DOWNLOAD}" -C "${ROOT}"
+mkdir -p "${SOURCE_DIR}"
+curl -L "${TARBALL_URL}" | tar xzf - -C "${SOURCE_DIR}" --strip-components=1
 cd "${SOURCE_DIR}"
 
 # Configure build
