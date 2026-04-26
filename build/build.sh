@@ -7,7 +7,7 @@ VERSION=$1
 case $VERSION in
 trunk)
     VERSION=trunk-$(date +%Y%m%d)
-    TARBALL_URL=https://cache.ruby-lang.org/pub/ruby/snapshot/ruby-snapshot.tar.gz
+    TARBALL_URL=https://cache.ruby-lang.org/pub/ruby/snapshot/snapshot-master.tar.gz
     SOURCE_DIR=${ROOT}/ruby-master
     ;;
 *)
